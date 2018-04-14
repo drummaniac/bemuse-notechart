@@ -14,15 +14,18 @@ export class NotechartLoader {
   load (arraybuffer, resource, options) {
     if (resource.name.match(/\.bmson$/i)) {
       return this.loadBmson(arraybuffer, resource, options)
+    } else if (resource.name.match(/\.dtx$/i)) {
+      return this.loadBMS(arraybuffer, resource, options, { format: 'dtx' })
     } else {
       return this.loadBMS(arraybuffer, resource, options)
     }
   }
 
-  async loadBMS (arraybuffer, resource, options) {
+  async loadBMS (arraybuffer, resource, options, compilerOptions) {
+    compilerOptions = compilerOptions || { }
     let buffer        = coerceToBuffer(arraybuffer)
     let source        = await Promise.promisify(BMS.Reader.readAsync)(buffer)
-    let compileResult = BMS.Compiler.compile(source)
+    let compileResult = BMS.Compiler.compile(source, compilerOptions)
     let chart         = compileResult.chart
     let notechart     = BMSNotechartLoader.fromBMSChart(chart, options)
     return notechart
