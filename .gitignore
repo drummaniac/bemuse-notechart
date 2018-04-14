@@ -46,3 +46,6 @@ Icon
 /data/
 /index.js
 /loader/
+
+# JetBrains project config
+/.idea

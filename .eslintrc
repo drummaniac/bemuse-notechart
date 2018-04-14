@@ -1,2 +1,4 @@
 
 extends: bemuse
+parserOptions:
+  ecmaVersion: 2017

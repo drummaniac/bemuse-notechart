@@ -73,6 +73,22 @@ describe('Notechart', function () {
         void expect(subject.notes.filter(byColumn('1'))).to.be.empty
         void expect(subject.notes.filter(byColumn('2'))).to.be.empty
       })
+
+      describe('noShifting', function() {
+        it('should keep notes intact', function() {
+          var subject = notechart(src, {
+            scratch: 'right',
+            noShifting: true
+          })
+          void expect(subject.notes.filter(byColumn('1'))).not.to.be.empty
+          void expect(subject.notes.filter(byColumn('2'))).not.to.be.empty
+          void expect(subject.notes.filter(byColumn('3'))).not.to.be.empty
+          void expect(subject.notes.filter(byColumn('4'))).not.to.be.empty
+          void expect(subject.notes.filter(byColumn('5'))).not.to.be.empty
+          void expect(subject.notes.filter(byColumn('6'))).to.be.empty
+          void expect(subject.notes.filter(byColumn('7'))).to.be.empty
+        })
+      })
     })
   })
 
@@ -145,9 +161,58 @@ describe('Notechart', function () {
 
   describe('#columns', function () {
     it('should return columns in notechart', function () {
-      var subject = notechart('#00111:11')
+      var subject = notechart(`
+          #00111:01
+          #00112:01
+          #00113:01
+          #00114:01
+          #00115:01
+          #00116:01
+          #00118:01
+          #00119:01
+      `)
+
       expect(subject.columns)
-          .to.deep.equal(['SC', '1', '2', '3', '4', '5', '6', '7'])
+        .to.have.members(['SC', '1', '2', '3', '4', '5', '6', '7'])
+    })
+
+    it('should return mapped columns in notechart', function () {
+      var subject = notechart(
+        `
+          #00111:01
+          #00112:01
+          #00113:01
+          #00114:01
+          #00115:01
+          #00116:01
+          #00117:01
+          #00118:01
+          #00119:01
+          #0011A:01
+          #0011B:01
+          #0011C:01
+        `,
+        {
+          mapping: {
+            '1A': 'LC',
+            '11': 'HC',
+            '18': 'HO',
+            '1C': 'LP',
+            '1B': 'LD',
+            '12': 'SD',
+            '13': 'BD',
+            '14': 'LT',
+            '15': 'HT',
+            '17': 'FT',
+            '16': 'RC',
+            '19': 'RD'
+          },
+          noShifting: true
+        }
+      )
+
+      expect(subject.columns)
+        .to.have.members(['LC', 'HO', 'HC', 'LP', 'LD', 'SD', 'BD', 'LT', 'HT', 'FT', 'RD', 'RC'])
     })
   })
 

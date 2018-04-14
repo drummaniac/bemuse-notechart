@@ -1,6 +1,5 @@
 import _          from 'lodash'
 import invariant  from 'invariant'
-import BMS from 'bms'
 
 import GameEvent  from './data/GameEvent'
 import GameNote   from './data/GameNote'
@@ -32,7 +31,9 @@ export class Notechart {
 
     this.expertJudgmentWindow = expertJudgmentWindow
 
-    bmsNotes = this._preTransform(bmsNotes, playerOptions)
+    if (!playerOptions.noShifting) {
+      bmsNotes = this._preTransform(bmsNotes, playerOptions)
+    }
 
     this._timing      = timing
     this._positioning = positioning
@@ -47,6 +48,7 @@ export class Notechart {
         note => [note, this._getNoteInfo(note)]))
     this._songInfo    = songInfo
     this._images      = images
+    this._columns     = this._generateColumnsFromBMS(bmsNotes)
   }
 
   // An Array of note events.
@@ -76,7 +78,7 @@ export class Notechart {
 
   // An Array of all column names in this notechart.
   get columns () {
-    return ['SC', '1', '2', '3', '4', '5', '6', '7']
+    return this._columns
   }
 
   // Notechart's duration (time of last event)
@@ -125,7 +127,7 @@ export class Notechart {
     return this._timing.secondsToBeat(seconds)
   }
 
-  // Conerts the in-song position to in-game position.
+  // Converts the in-song position to in-game position.
   secondsToPosition (seconds) {
     return this.beatToPosition(this.secondsToBeat(seconds))
   }
@@ -247,6 +249,18 @@ export class Notechart {
   _getNoteInfo (note) {
     let combos = note.end ? 2 : 1
     return { combos }
+  }
+
+  _generateColumnsFromBMS (bmsNotes) {
+    const usedColumns = {}
+    const columns = []
+    for (const note of bmsNotes) {
+      if (!usedColumns[note.column]) {
+        columns.push(note.column)
+      }
+      usedColumns[note.column] = true
+    }
+    return columns
   }
 }
 
