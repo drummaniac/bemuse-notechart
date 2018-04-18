@@ -5,7 +5,9 @@ import Notechart from '../'
 
 // Returns a new Notechart from a BMSChart.
 export function fromBMSChart (bms, playerOptions) {
-  let notes       = BMS.Notes.fromBMSChart(bms).all()
+  playerOptions = playerOptions || { }
+  let options = { mapping: playerOptions.mapping }
+  let notes       = BMS.Notes.fromBMSChart(bms, options).all()
   let timing      = BMS.Timing.fromBMSChart(bms)
   let keysounds   = BMS.Keysounds.fromBMSChart(bms)
   let songInfo    = BMS.SongInfo.fromBMSChart(bms)
